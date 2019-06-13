@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Hangman</title>
+  </head>
+  <body>
+    <h1>Hangman</h1>
+    <p>Wins: <span id="wins-text"></span></p>
+    <p>Losses: <span id="losses-text"></span></p>
+    <p>Remaining Guesses: <span id="remaining-guesses-text"></span></p>
+    <p>Letters Guessed: <span id="guessed-letters-text"></span></p>
+    <p id="placeholder-text"></p>
+
+    <script>
+      // GLOBAL ARRAY
+      const wordArray = ["hello", "hola", "good morning"];
+
+      // GLOBAL FUNCTIONS
+      const createPlaceholders = function(currentWord) {
+        let placeholder = [];
+        currentWord = currentWord.split("");
+        currentWord.forEach(letter => 
+            (letter === ' ') ? 
+            placeholder.push(' ') : 
+            placeholder.push('___')
+        );
+        return placeholder;
+      };
+
+      const updatePlaceholder = function(userGuess) {
+
+        let placeholderIndex = 0;
+
+        for (let i = 0; i < currentWord.length; i++) {
+          if (currentWord[i] === userGuess) {
+            placeholderIndex = i;
+            placeholders[i] = userGuess;
+            displayedPlaceholders = placeholders.join(' ');
+          }
+        }
+
+        if (displayedPlaceholders.indexOf('___') === -1) {
+            alert('You won!');
+            wins += 1;
+        }
+        console.log(placeholders);
+      };
+
+      const startGame = function() {
+        remainingGuesses = 5;
+        currentWord = generateWord();
+        placeholders = createPlaceholders(currentWord);
+        displayedPlaceholders = placeholders.join(' ');
+        winsText.innerText = wins;
+        lossesText.innerText = losses;
+        remainingGuessesText.innerText = remainingGuesses;
+        lettersGuessText.innerText = lettersGuess.join(' ');
+        placeholderText.innerText = displayedPlaceholders;
+      }
+
+      const updateStats = function() {
+        winsText.innerText = wins;
+        lossesText.innerText = losses;
+        remainingGuessesText.innerText = remainingGuesses;
+        lettersGuessText.innerText = lettersGuess.join(' ');
+        placeholderText.innerText = displayedPlaceholders;
+      };
+
+      const checkUserGuess = function(userGuess) {
+        if (remainingGuesses === 1) {
+            losses++;
+            gameOver()
+        } else if (currentWord.indexOf(userGuess) === -1 && lettersGuess.indexOf(userGuess) === -1) {
+            return true
+        }
+      };
+
+      const generateWord = function() {
+        return wordArray[Math.floor(Math.random() * wordArray.length)];
+      };
+      
+      const gameOver = function() {
+          let response = confirm('You lost! Play again?');
+            if (response) {
+                startGame()
+            } else {
+                alert('Thanks for playing!')
+                clearScreen()
+            }
+      }
+
+      const clearScreen = function() {
+          document.write('Laters!')
+      }
+
+      // GLOBAL VARIABLES
+      let wins = 0;
+      let losses = 0;
+      let remainingGuesses;
+      let lettersGuess = [];
+      let currentWord;
+      let placeholders;
+      let displayedPlaceholders;
+      let winsText = document.getElementById("wins-text");
+      let lossesText = document.getElementById("losses-text");
+      let lettersGuessText = document.getElementById("guessed-letters-text");
+      let remainingGuessesText = document.getElementById(
+        "remaining-guesses-text"
+      );
+      let placeholderText = document.getElementById("placeholder-text");
+      
+      // METHODS
+      startGame();
+      console.log(currentWord);
+
+      document.onkeyup = function(event) {
+        let userGuess = event.key;
+        console.log("userGuess", userGuess);
+        if (checkUserGuess(userGuess)) {
+          lettersGuess.push(userGuess);
+          --remainingGuesses;
+          updateStats();
+        } else {
+          updatePlaceholder(userGuess);
+          updateStats();
+        }
+      };
+    </script>
+  </body>
+</html>
